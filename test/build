@@ -1,8 +1,3 @@
 #!/bin/sh
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-$JAVA_HOME/bin/javac -Xlint:-options -source 6 -target 6 HelloWorld.java
-$JAVA_HOME/bin/javac -g -Xlint:-options -source 6 -target 6 -cp ../std/bin ComponentTest.java
-$JAVA_HOME/bin/javac -g -Xlint:-options -source 6 -target 6 -cp ../std/bin StargazerTest.java
-$JAVA_HOME/bin/javac -g -Xlint:-options -source 6 -target 6 -cp ../std/bin JavaShell.java
-$JAVA_HOME/bin/javac -g -Xlint:-options -source 6 -target 6 -cp ../std/bin ThreadTest.java
-$JAVA_HOME/bin/javac -g -Xlint:-options -source 6 -target 6 -cp ../std/bin CosineTest.java
+$JAVA_HOME/bin/javac -g -Xlint:-options -source 5 -target 5 HelloWorld.java

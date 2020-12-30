@@ -119,11 +119,11 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
 			return list.get(index + from);
 		}
 
-		public E set(int index, E obj) {
+		public E set(int index, Object obj) {
 			return list.set(index + from, obj);
 		}
 
-		public void add(int index, E obj) {
+		public void add(int index, Object obj) {
 			list.add(index + from, obj);
 		}
 

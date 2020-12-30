@@ -7,7 +7,7 @@ local class = require("class")
 local types = require("type")
 
 function classLoader.getReferencedClass(ref)
-	return classLoader.classReferences[ref]
+	return classLoader.classReferences[ref];
 end
 
 function classLoader.classObject(class, thread)
@@ -45,8 +45,6 @@ function classLoader.loadClass(path, init)
 		initedClasses[path] = true
 		local clInit
 		for _,v in pairs(cl.methods) do
-			local isStatic = (v.accessFlags & 0x8) == 0x8
-			--print(v.class.name .. ": " .. v.name .. ": " .. string.format("0x%x", v.accessFlags))
 			if v.name == "<clinit>" then
 				clInit = v
 			end
@@ -58,11 +56,7 @@ function classLoader.loadClass(path, init)
 		end
 		local classReference = types.referenceForClass(cl)
 		if clInit then
-			local throwable = mainThread:executeMethod(cl, clInit, {})
-			if throwable then
-				local throwedClass = throwable[2].class[2].class
-				mainThread:executeMethod(throwedClass, mainThread:findMethod(throwedClass, "printStackTrace", "()V"), {throwable})
-			end
+			mainThread:executeMethod(cl, clInit, {classReference})
 		end
 	end
 	return cl, err

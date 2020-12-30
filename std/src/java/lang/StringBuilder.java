@@ -1,6 +1,6 @@
 package java.lang;
 
-public class StringBuilder implements Appendable {
+public class StringBuilder {
 
 	public char[] chars;
 
@@ -12,7 +12,6 @@ public class StringBuilder implements Appendable {
 		chars = str.toCharArray();
 	}
 
-	/*
 	public StringBuilder append(char[] chars) {
 		int orgLength = this.chars.length;
 		char[] newChars = new char[orgLength + chars.length];
@@ -21,36 +20,21 @@ public class StringBuilder implements Appendable {
 		this.chars = newChars;
 		return this;
 	}
-	*/
-
-	public native StringBuilder append(char[] chars);
-
-	public StringBuilder append(CharSequence sq) {
-		return append(sq.toString());
-	}
-
-	public StringBuilder append(CharSequence sq, int start, int end) {
-		return append(sq.subSequence(start, end));
-	}
 
 	public StringBuilder append(String str) {
-		return append(str.toCharArray());
+		append(str.toCharArray());
+		return this;
 	}
 
 	public StringBuilder append(Object obj) {
-		return append(String.valueOf(obj));
+		append(String.valueOf(obj));
+		return this;
 	}
 
 	public StringBuilder append(char c) {
-		return append(new char[] {c});
-	}
-
-	public StringBuilder append(double d) {
-		return append(String.valueOf(d));
-	}
-
-	public StringBuilder append(float f) {
-		return append(String.valueOf(f));
+		char[] array = new char[1];
+		array[0] = c;
+		return append(array);
 	}
 
 	public StringBuilder append(long l) {
@@ -59,24 +43,6 @@ public class StringBuilder implements Appendable {
 
 	public StringBuilder append(int i) {
 		return append((long) i);
-	}
-
-	public StringBuilder insert(int off, char[] chars) {
-		int orgLength = this.chars.length;
-		char[] newChars = new char[orgLength + chars.length];
-		System.arraycopy(this.chars, 0, newChars, 0, off);
-		System.arraycopy(chars, 0, newChars, off, chars.length);
-		System.arraycopy(this.chars, off, newChars, off+1, orgLength-off);
-		this.chars = newChars;
-		return this;
-	}
-
-	public StringBuilder insert(int off, char c) {
-		return insert(off, new char[] {c});
-	}
-
-	public StringBuilder insert(int off, String str) {
-		return insert(off, str.toCharArray());
 	}
 
 	public String toString() {

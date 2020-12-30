@@ -1,6 +1,6 @@
 package java.lang;
 
-public class NullPointerException extends RuntimeException {
+public class NullPointerException extends Exception {
 
 	public NullPointerException() {
 		super();
