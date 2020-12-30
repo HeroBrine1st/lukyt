@@ -1,5 +1,8 @@
-package java.lang;
+package lukyt;
 
+/**
+	Exception thrown when no children with specified key has been found.
+**/
 public class ChildNotFoundException extends RuntimeException {
 
 	public ChildNotFoundException() {

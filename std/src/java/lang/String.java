@@ -1,8 +1,12 @@
 package java.lang;
 
-public class String {
+import java.util.Formatter;
+
+public class String implements CharSequence {
 
 	private char[] chars; // not Unicode-proof
+	private boolean hashCodeDefined;
+	private int hashCode;
 
 	public String(char[] chars) {
 		this.chars = chars;
@@ -16,7 +20,9 @@ public class String {
 	}
 
 	public String(String original) {
-		this(original.toCharArray());
+		char[] copy = new char[original.length()];
+		System.arraycopy(original.toCharArray(), 0, copy, 0, original.length());
+		this.chars = copy;
 	}
 
 	public String(StringBuffer buffer) {
@@ -61,12 +67,43 @@ public class String {
 		return str;
 	}
 
+	public static String valueOf(float f) {
+		return valueOf((double) f);
+	}
+	
+	public static native String valueOf(double d);
+
+	public static String format(String format, Object... args) {
+		Formatter formatter = new Formatter();
+		formatter.format(format, args);
+		return formatter.toString();
+	}
+
 	public int length() {
 		return chars.length;
 	}
 
 	public char charAt(int index) {
 		return chars[index];
+	}
+
+	public byte[] getBytes() {
+		byte[] arr = new byte[chars.length];
+		for (int i = 0; i < chars.length; i++) {
+			arr[i] = (byte) chars[i];
+		}
+		return arr;
+	}
+
+	public CharSequence subSequence(int start, int end) {
+		return substring(start, end);
+	}
+
+	public String substring(int begin, int end) {
+		int len = end - begin + 1;
+		char[] ca = new char[len];
+		System.arraycopy(chars, begin, ca, 0, len);
+		return new String(ca);
 	}
 
 	public String concat(String str) {
@@ -82,19 +119,26 @@ public class String {
 		if (length() != other.length()) {
 			return false;
 		}
+		/*
 		for (int i = 0; i < chars.length; i++) {
 			if (chars[i] != other.chars[i]) {
 				return false;
 			}
 		}
 		return true;
+		*/
+		// FAST METHOD: (low) risk of collision!
+		return hashCode() == other.hashCode();
 	}
 
 	public int hashCode() {
-		int hashCode = 0;
-		for (int i = 0; i < chars.length; i++) {
-			hashCode += chars[i];
-			hashCode *= 145;
+		if (!hashCodeDefined) {
+			hashCode = 0;
+			for (int i = 0; i < chars.length; i++) {
+				hashCode += chars[i];
+				hashCode *= 31;
+			}
+			hashCodeDefined = true;
 		}
 		return hashCode;
 	}
@@ -130,6 +174,30 @@ public class String {
 			}
 		}
 		return newStr;
+	}
+
+	public String toLowerCase() {
+		String str = new String(this);
+		for (int i = 0; i < str.length(); i++) {
+			str.chars[i] = Character.toLowerCase(chars[i]);
+		}
+		return str;
+	}
+
+	public String toUpperCase() {
+		String str = new String(this);
+		for (int i = 0; i < str.length(); i++) {
+			str.chars[i] = Character.toUpperCase(chars[i]);
+		}
+		return str;
+	}
+
+	public boolean contains(CharSequence s) {
+		for (int i = 0; i < chars.length-s.length()+1; i++) {
+			String sub = substring(i, s.length());
+			if (sub.equals(s)) return true;
+		}
+		return false;
 	}
 
 	public char[] toCharArray() {

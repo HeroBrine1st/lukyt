@@ -2,9 +2,27 @@ package java.lang;
 
 public class Class<T> {
 	private long ref; // class reference id
+	private ClassLoader classLoader;
+
+	public static Class<?> forName(String name) {
+		return forName(name, true, ClassLoader.getSystemClassLoader());
+	}
+
+	public static Class<?> forName(String name, boolean initialize, ClassLoader loader) {
+		return loader.loadClass(name, initialize);
+	}
 
 	private Class(long ref) {
+		this(ClassLoader.getSystemClassLoader(), ref);
+	}
+
+	private Class(ClassLoader classLoader, long ref) {
 		this.ref = ref;
+		this.classLoader = classLoader;
+	}
+
+	public ClassLoader getClassLoader() {
+		return classLoader;
 	}
 
 	public <T> T newInstance() {
@@ -17,6 +35,10 @@ public class Class<T> {
 
 	public boolean isEnum() {
 		return isEnum(ref);
+	}
+
+	public boolean desiredAssertionStatus() {
+		return false;
 	}
 
 	private native static <T> T newClassInstance(long ref);

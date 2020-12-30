@@ -6,6 +6,7 @@ public class HelloWorld {
 
 	public static void main(String[] args) throws Exception {
 		long start = System.nanoTime();
+		System.out.println("System.out: " + System.out);
 		System.out.println("Hello, World!");
 		System.out.println("OS kind: " + System.getProperty("os.name"));
 
@@ -38,6 +39,16 @@ public class HelloWorld {
 		System.out.println("Welcome to this.. testing program?");
 		System.out.println("Type \"throw\" to throw an exception");
 		System.out.println("Type \"woops\" to throw a catched exception");
+
+		/*Thread th = new Thread() {
+			public void run() {
+				while (true) {
+					System.out.println("test");
+				}
+			}
+		};
+		th.start();*/
+
 		while (true) {
 			String str = "";
 			char c = 0;
