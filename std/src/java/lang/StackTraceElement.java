@@ -40,7 +40,7 @@ public class StackTraceElement {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append(declaringClass);
 		sb.append('.');
 		sb.append(getMethodName());
@@ -54,7 +54,6 @@ public class StackTraceElement {
 		} else {
 			sb.append(fileName);
 			if (lineNumber > 0) {
-				sb.append(':');
 				sb.append(lineNumber);
 			}
 		}

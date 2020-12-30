@@ -262,10 +262,10 @@ local function readFields(stream, constantPool)
 		local staticValue = types.nullReference()
 		if attributes["ConstantValue"] then
 			local value = getConstantValue(constantPool, attributes["ConstantValue"])
-			if value.type == "string" or value.type == "String" then
-				staticValue = {"defer", value.text.text} -- the String will be instanced in the thread that initializes the class
-			else
+			if value.type == "float" or value.type == "integer" or value.type == "long" or value.type == "double" then
 				staticValue = types.new(value.type, value)
+			elseif value.type == "string" then
+				staticValue = {"defer", value.text.text} -- the String will be instanced in the thread that initializes the class
 			end
 		end
 		table.insert(fields, {
@@ -290,22 +290,6 @@ local function getMethodExceptions(constantPool, method)
 		table.insert(exceptions, constantPool[readU2T(attr,1+i*2)])
 	end
 	return exceptions
-end
-
-local function getLineNumberTable(constantPool, attribute)
-	local length = readU2T(attribute, 1)
-	local lineNumbers = {}
-	local pos = 3
-	for i=1, length do
-		local start = readU2T(attribute, pos)
-		local line = readU2T(attribute, pos+2)
-		table.insert(lineNumbers, {
-			startPc = start,
-			lineNumber = line
-		})
-		pos = pos + 4
-	end
-	return lineNumbers
 end
 
 local function getMethodCode(thisName, constantPool, method)
@@ -333,13 +317,13 @@ local function getMethodCode(thisName, constantPool, method)
 	local codeLength = readU4T(attr, 5)
 	local code = table.pack(table.unpack(table.pack(attr:byte(1,attr:len())), 9, 8+codeLength))
 	local number = readU2T(attr, 9+codeLength)
-	local start = 11 + codeLength -- minus 8 because "i" starts at 1
+	local start = 11 + codeLength - 8 -- minus 8 because "i" starts at 1
 	local exceptionHandlers = {}
 	for i=1, number do
-		local startPc = readU2T(attr, start) + 1
-		local endPc = readU2T(attr, start+2) + 1
-		local handlerPc = readU2T(attr, start+4) + 1
-		local catchType = readU2T(attr, start+6)
+		local startPc = readU2T(attr, start+8*i) + 1
+		local endPc = readU2T(attr, start+8*i+2) + 1
+		local handlerPc = readU2T(attr, start+8*i+4) + 1
+		local catchType = readU2T(attr, start+8*i+6)
 		if catchType == 0 then
 			catchType = "any"
 		else
@@ -351,29 +335,12 @@ local function getMethodCode(thisName, constantPool, method)
 			handlerPc = handlerPc,
 			catchClass = catchType
 		})
-		start = start + 8
-	end
-	local attributes = {}
-	local attributesCount = readU2T(attr, start)
-	start = start + 2
-	for i=1, attributesCount do
-		local nameIndex = readU2T(attr, start)
-		local length = readU4T(attr, start+2)
-		local bytes = attr:sub(start+6, start+5+length)
-		attributes[constantPool[nameIndex].text] = bytes
-		start = start + 6 + length
-	end
-	local lineNumbers = {}
-	if attributes["LineNumberTable"] then
-		lineNumbers = getLineNumberTable(constantPool, attributes["LineNumberTable"])
 	end
 	return {
 		nativeName = nil,
 		maxStackSize = maxStack,
 		maxLocals = maxLocals,
 		code = code,
-		attributes = attributes,
-		lineNumbers = lineNumbers,
 		exceptionHandlers = exceptionHandlers
 	}
 end
@@ -431,8 +398,8 @@ function lib.read(stream)
 	local minor = readU2(stream)
 	local major = readU2(stream)
 	printDebug("Class Version: " .. major .. "." .. minor)
-	if major > 52 then
-		error("unsupported class version, Lukyt supports class files up to Java 8")
+	if major > 49 then
+		error("unsupported class version, Lukyt supports only up to Java 5")
 	end
 	local constantPools = readConstantPool(stream)
 

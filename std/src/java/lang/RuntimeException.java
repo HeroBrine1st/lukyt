@@ -1,6 +1,6 @@
 package java.lang;
 
-public class RuntimeException extends Exception {
+public class RuntimeException extends Throwable {
 
 	public RuntimeException() {
 		super();

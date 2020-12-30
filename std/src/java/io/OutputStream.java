@@ -1,20 +1,20 @@
 package java.io;
 
-public abstract class OutputStream implements Closeable, Flushable {
+public abstract class OutputStream {
 
-	public abstract void write(int b) throws IOException;
+	public abstract void write(int b);
 
-	public void write(byte[] bytes, int off, int len) throws IOException {
+	public void write(byte[] bytes, int off, int len) {
 		int end = off + len;
 		for (int i = off; i < end; i++) {
 			write((int) bytes[i]);
 		}
 	}
 
-	public void close() throws IOException {}
-	public void flush() throws IOException {}
+	public void close() {}
+	public void flush() {}
 
-	public void write(byte[] bytes) throws IOException {
+	public void write(byte[] bytes) {
 		write(bytes, 0, bytes.length);
 	}
 
